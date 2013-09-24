@@ -1,1 +1,1 @@
-include ':weather'
+include ':weather', ':WWO API'

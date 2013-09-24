@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.boboddy.weather.util.LocalWeather;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -25,6 +26,7 @@ import android.location.Location;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.nio.channels.AsynchronousCloseException;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,7 +41,7 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
     Location mLastLocation;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -50,16 +52,30 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
 
     }
 
+    public void onConnect(Bundle connectionHint) {
+        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT);
+
+        mLastLocation = mLocationClient.getLastLocation();
+    }
+
     protected void onStart() {
         super.onStart();
         mLocationClient.connect();
-
-        mLastLocation = mLocationClient.getLastLocation();
     }
 
     protected void onStop() {
         mLocationClient.disconnect();
         super.onStop();
+    }
+
+    public void getWeather(View v) {
+        mProgressBar.setVisibility(View.VISIBLE);
+        if(mLastLocation == null) {
+            Log.d("weather", "Don't have location");
+            Toast.makeText(this, "Don't have location", Toast.LENGTH_SHORT).show();
+        }
+
+        (new GetWeatherTask(this)).execute(mLastLocation);
     }
 
     public void getAddress(View v) {
@@ -74,6 +90,13 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
              * When the task finishes,
              * onPostExecute() displays the address.
              */
+            if(mLastLocation == null) {
+                Log.e("weather", "Last location is null, uh oh");
+                Toast.makeText(this, "Location is null", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.i("weather", "Location: " + mLastLocation.toString());
+            }
+
             (new GetAddressTask(this)).execute(mLastLocation);
         } else {
             Toast.makeText(this, "Geocoder not present", Toast.LENGTH_SHORT).show();
@@ -120,6 +143,7 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
      */
     public void onConnected(Bundle bundle) {
         Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+        mLastLocation = mLocationClient.getLastLocation();
     }
 
     /*
@@ -160,6 +184,32 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
              * user with the error.
              */
             //showErrorDialog(connectionResult.getErrorCode());
+        }
+    }
+
+    private class GetWeatherTask extends AsyncTask<Location, Void, String> {
+        Context mContext;
+        public GetWeatherTask(Context c) {
+            super();
+            mContext = c;
+        }
+
+        protected String doInBackground(Location... locations) {
+            Location loc = locations[0];
+            String q = Double.toString(loc.getLatitude()) + "," + Double.toString(loc.getLongitude());
+
+            LocalWeather lw = new LocalWeather();
+            String query = (lw.new Params(lw.getKey())).setQ(q).getQueryString(LocalWeather.Params.class);
+            LocalWeather.Data wCond = lw.callAPI(query);
+
+            return wCond.getWeather().getWeatherDesc();
+        }
+
+        protected void onPostExecute(String weather) {
+            //Make the progress bar go away
+            mProgressBar.setVisibility(View.GONE);
+            //Set the final result
+            mAddress.setText(weather);
         }
     }
 

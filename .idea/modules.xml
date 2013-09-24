@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/WWO API/WWO API.iml" filepath="$PROJECT_DIR$/WWO API/WWO API.iml" />
       <module fileurl="file://$PROJECT_DIR$/weather/weather.iml" filepath="$PROJECT_DIR$/weather/weather.iml" />
       <module fileurl="file://$PROJECT_DIR$/weatherProject.iml" filepath="$PROJECT_DIR$/weatherProject.iml" />
     </modules>

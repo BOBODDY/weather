@@ -2,7 +2,7 @@
   <library name="ComGoogleAndroidGmsPlayServices3225.aar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/weather/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3225.aar/classes.jar!/" />
-      <root url="jar://$PROJECT_DIR$/weather/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3225.aar/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/weather/build/exploded-bundles/ComGoogleAndroidGmsPlayServices3225.aar/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
