@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.boboddy.weather.util.LocalWeather;
+import com.boboddy.weather.util.Util;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -195,14 +196,23 @@ public class MainActivity extends Activity implements GooglePlayServicesClient.C
         }
 
         protected String doInBackground(Location... locations) {
+            Log.d("weather", "Starting to get weather");
             Location loc = locations[0];
             String q = Double.toString(loc.getLatitude()) + "," + Double.toString(loc.getLongitude());
+
+            Log.d("weather", "Coordinates: " + q);
 
             LocalWeather lw = new LocalWeather();
             String query = (lw.new Params(lw.getKey())).setQ(q).getQueryString(LocalWeather.Params.class);
             LocalWeather.Data wCond = lw.callAPI(query);
 
-            return wCond.getWeather().getWeatherDesc();
+            String current_temp = wCond.getCurrentCondition().getTemp_C();
+            
+            double temp = Util.celsiusToFahr(Double.valueOf(current_temp));
+
+            Log.d("weather", temp + "F");
+
+            return temp + "F";
         }
 
         protected void onPostExecute(String weather) {
