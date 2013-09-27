@@ -132,6 +132,10 @@ public class LocalWeather extends WwoApi {
         CurrentCondition current_condition;
         Weather weather;
 
+        public CurrentCondition getCurrentCondition() {
+            return this.current_condition;
+        }
+
         public Weather getWeather() {
             return this.weather;
         }
@@ -148,6 +152,11 @@ public class LocalWeather extends WwoApi {
 
     public class CurrentCondition {
         String observation_time;
+
+        public String getTemp_C() {
+            return temp_C;
+        }
+
         String temp_C;
         String weatherCode;
         String weatherIconUrl;
